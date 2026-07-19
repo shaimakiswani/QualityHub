@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { saveQARequest } from '../firebase';
-import { CheckCircle2, Send, Clock, ShieldCheck, Mail, Building, Globe, DollarSign, AlertCircle } from 'lucide-react';
+import { CheckCircle2, Send, Clock, ShieldCheck, Mail, Building, Globe, DollarSign, AlertCircle, Phone } from 'lucide-react';
 
 export default function Contact({ selectedService }) {
   const [formData, setFormData] = useState({
@@ -99,12 +99,27 @@ export default function Contact({ selectedService }) {
 
             <div className="info-item">
               <div className="info-icon">
+                <Phone size={20} />
+              </div>
+              <div>
+                <h4 style={{ fontSize: '1.05rem', fontWeight: '600' }}>Phone & WhatsApp</h4>
+                <p style={{ fontSize: '0.88rem', color: 'var(--primary-cyan)', fontWeight: '600' }}>
+                  +962 7 7264 410 (077264410)
+                </p>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                  Direct line for Jordanian clients & instant support.
+                </p>
+              </div>
+            </div>
+
+            <div className="info-item">
+              <div className="info-icon">
                 <Mail size={20} />
               </div>
               <div>
                 <h4 style={{ fontSize: '1.05rem', fontWeight: '600' }}>Direct Support Line</h4>
                 <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)' }}>
-                  Dedicated Slack / Teams communication channel for real-time defect updates.
+                  support@qualityhub.qa
                 </p>
               </div>
             </div>

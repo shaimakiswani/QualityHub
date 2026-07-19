@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -8,6 +8,10 @@ import Contact from './pages/Contact';
 export default function App() {
   const [activePage, setActivePage] = useState('home');
   const [selectedService, setSelectedService] = useState('');
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [activePage]);
 
   const renderPage = () => {
     switch (activePage) {

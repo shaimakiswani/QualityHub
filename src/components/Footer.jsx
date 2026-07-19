@@ -66,7 +66,7 @@ export default function Footer({ setActivePage }) {
                 <Mail size={16} color="var(--primary-cyan)" /> support@qualityhub.qa
               </li>
               <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Phone size={16} color="var(--primary-cyan)" /> +1 (800) 555-0199
+                <Phone size={16} color="var(--primary-cyan)" /> +962 7 7264 410
               </li>
               <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Globe size={16} color="var(--primary-cyan)" /> www.qualityhub.qa
