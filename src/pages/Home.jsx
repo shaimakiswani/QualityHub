@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { saveTestimonial } from '../firebase';
+import { db } from '../firebase';
+import { collection, getDocs } from 'firebase/firestore';
 import { 
   ShieldCheck, 
   CheckCircle2, 
@@ -30,10 +32,31 @@ export default function Home({ setActivePage, onSelectService }) {
   });
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
 
-  const loadTestimonials = () => {
+  const loadTestimonials = async () => {
     try {
       const stored = JSON.parse(localStorage.getItem('qualityhub_testimonials') || '[]');
-      setUserTestimonials(stored.reverse());
+      let all = [...stored];
+
+      if (db) {
+        try {
+          const revSnapshot = await getDocs(collection(db, "qa_testimonials"));
+          revSnapshot.forEach((docSnap) => {
+            const rData = docSnap.data();
+            all.push({ id: docSnap.id, ...rData });
+          });
+        } catch (cloudErr) {
+          console.warn("Cloud testimonials fetch notice:", cloudErr);
+        }
+      }
+
+      // Filter duplicates by ID or comment text
+      const revMap = new Map();
+      all.forEach(item => {
+        const key = item.id || `${item.name}-${item.comment}`;
+        revMap.set(key, item);
+      });
+
+      setUserTestimonials(Array.from(revMap.values()).reverse());
     } catch (e) {
       console.error(e);
     }
