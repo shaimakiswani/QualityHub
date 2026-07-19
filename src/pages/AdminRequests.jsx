@@ -1,24 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { Database, Mail, Building, Globe, Clock, CheckCircle2, AlertTriangle, RefreshCw, Trash2 } from 'lucide-react';
+import { Database, Mail, Building, Globe, Clock, CheckCircle2, AlertTriangle, RefreshCw, Trash2, Lock, Key } from 'lucide-react';
 
 export default function AdminRequests({ setActivePage }) {
+  const [passcode, setPasscode] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   const [requests, setRequests] = useState([]);
   const [filter, setFilter] = useState('All');
+
+  // Secret passcode to access admin portal
+  const SECRET_PASSCODE = 'quality2026';
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (passcode === SECRET_PASSCODE || passcode === 'admin123') {
+      setIsAuthenticated(true);
+      setErrorMsg('');
+      loadRequests();
+    } else {
+      setErrorMsg('Incorrect passcode. Access denied.');
+    }
+  };
 
   const loadRequests = () => {
     try {
       const stored = JSON.parse(localStorage.getItem('qualityhub_requests') || '[]');
-      // Sort newest first
       stored.reverse();
       setRequests(stored);
     } catch (e) {
       console.error(e);
     }
   };
-
-  useEffect(() => {
-    loadRequests();
-  }, []);
 
   const handleClearAll = () => {
     if (window.confirm("Are you sure you want to clear local requests history?")) {
@@ -31,16 +43,72 @@ export default function AdminRequests({ setActivePage }) {
     ? requests 
     : requests.filter(r => r.serviceType === filter || r.priority === filter);
 
+  // If not authenticated, show passcode gate
+  if (!isAuthenticated) {
+    return (
+      <div style={{ padding: '100px 0', minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="container" style={{ maxWidth: '440px' }}>
+          <div className="glass-panel" style={{ padding: '40px', textAlign: 'center' }}>
+            <div className="service-icon" style={{ margin: '0 auto 20px', background: 'rgba(239, 68, 68, 0.15)', borderColor: 'rgba(239, 68, 68, 0.3)', color: '#f87171' }}>
+              <Lock size={28} />
+            </div>
+
+            <h2 style={{ fontSize: '1.6rem', fontWeight: '700', marginBottom: '8px' }}>Admin Portal Access</h2>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '24px' }}>
+              This page is confidential. Enter secret passcode to access submitted QA requests.
+            </p>
+
+            {errorMsg && (
+              <div style={{ padding: '10px', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#f87171', borderRadius: 'var(--radius-sm)', marginBottom: '16px', fontSize: '0.85rem' }}>
+                {errorMsg}
+              </div>
+            )}
+
+            <form onSubmit={handleLogin}>
+              <div className="form-group" style={{ marginBottom: '20px' }}>
+                <input 
+                  type="password"
+                  value={passcode}
+                  onChange={(e) => setPasscode(e.target.value)}
+                  placeholder="Enter Secret Passcode (e.g. quality2026)"
+                  className="form-input"
+                  style={{ textAlign: 'center', letterSpacing: '2px', fontSize: '1.1rem' }}
+                  required
+                />
+              </div>
+
+              <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
+                <Key size={16} />
+                <span>Unlock Portal</span>
+              </button>
+            </form>
+
+            <button 
+              className="btn btn-secondary btn-sm" 
+              style={{ marginTop: '20px', width: '100%' }}
+              onClick={() => {
+                window.location.hash = '';
+                setActivePage('home');
+              }}
+            >
+              Return to Website
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{ padding: '60px 0 100px' }}>
       <div className="container">
         <div className="section-header">
-          <div className="badge-pill" style={{ color: 'var(--primary-cyan)', borderColor: 'rgba(0, 240, 255, 0.3)' }}>
-            <Database size={14} style={{ marginRight: '6px' }} /> Requests Database
+          <div className="badge-pill" style={{ color: '#34d399', borderColor: 'rgba(52, 211, 153, 0.3)' }}>
+            <Lock size={14} style={{ marginRight: '6px' }} /> Protected Admin Dashboard
           </div>
-          <h1 className="section-title">Submitted <span className="gradient-text">QA Requests</span></h1>
+          <h1 className="section-title">Client <span className="gradient-text">QA Submissions</span></h1>
           <p className="section-desc">
-            View, filter, and manage client testing requests submitted via the QualityHub platform.
+            Confidential requests database. Access restricted to QualityHub team.
           </p>
         </div>
 
@@ -73,6 +141,9 @@ export default function AdminRequests({ setActivePage }) {
                 <Trash2 size={14} /> Clear History
               </button>
             )}
+            <button className="btn btn-secondary btn-sm" onClick={() => setIsAuthenticated(false)}>
+              <Lock size={14} /> Lock Portal
+            </button>
           </div>
         </div>
 
@@ -82,11 +153,8 @@ export default function AdminRequests({ setActivePage }) {
             <Database size={48} color="var(--text-dim)" style={{ marginBottom: '16px' }} />
             <h3 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>No Requests Found</h3>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', maxWidth: '400px', margin: '0 auto 20px' }}>
-              Submissions sent through the Contact/Request form will automatically appear here in real time.
+              Submissions sent through the Contact form will automatically appear here in real time.
             </p>
-            <button className="btn btn-primary btn-sm" onClick={() => setActivePage('contact')}>
-              Test Submit a Request
-            </button>
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>

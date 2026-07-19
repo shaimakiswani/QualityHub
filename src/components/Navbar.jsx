@@ -41,16 +41,6 @@ export default function Navbar({ activePage, setActivePage, onSelectService }) {
               Contact / Request
             </a>
           </li>
-          <li>
-            <a 
-              className={`nav-link ${activePage === 'admin' ? 'active' : ''}`}
-              onClick={() => setActivePage('admin')}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: activePage === 'admin' ? 'var(--primary-cyan)' : 'var(--text-muted)' }}
-            >
-              <Database size={15} />
-              <span>Admin DB</span>
-            </a>
-          </li>
         </ul>
 
         <div className="nav-cta">

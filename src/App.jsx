@@ -14,6 +14,17 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [activePage]);
 
+  useEffect(() => {
+    const handleHashChange = () => {
+      if (window.location.hash === '#admin') {
+        setActivePage('admin');
+      }
+    };
+    handleHashChange();
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
   const renderPage = () => {
     switch (activePage) {
       case 'services':
