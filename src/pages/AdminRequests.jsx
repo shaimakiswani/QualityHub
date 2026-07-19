@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { db } from '../firebase';
+import { collection, getDocs, query, orderBy, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { Database, Mail, Building, Globe, Clock, CheckCircle2, AlertTriangle, RefreshCw, Trash2, Lock, Key, Users, PhoneCall, Hourglass, CheckSquare, Square, Phone, Star, MessageSquare, ShieldAlert } from 'lucide-react';
 
 export default function AdminRequests({ setActivePage }) {
@@ -24,11 +26,48 @@ export default function AdminRequests({ setActivePage }) {
     }
   };
 
-  const loadData = () => {
+  const loadData = async () => {
     try {
-      // Load Requests
+      // 1. Load LocalStorage Requests
       const storedReqs = JSON.parse(localStorage.getItem('qualityhub_requests') || '[]');
-      const formattedReqs = storedReqs.map(item => ({
+      let allReqs = [...storedReqs];
+
+      // 2. Load Cloud Firestore Requests if connected
+      if (db) {
+        try {
+          const querySnapshot = await getDocs(collection(db, "qa_requests"));
+          const cloudReqs = [];
+          querySnapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            cloudReqs.push({
+              id: docSnap.id,
+              fullName: data.fullName || 'Anonymous Client',
+              email: data.email || 'N/A',
+              phone: data.phone || 'N/A',
+              company: data.company || '',
+              serviceType: data.serviceType || 'Manual Testing',
+              projectUrl: data.projectUrl || '',
+              priority: data.priority || 'Medium',
+              budget: data.budget || '$1,000 - $5,000',
+              message: data.message || '',
+              contactStatus: data.contactStatus || 'Pending',
+              createdAt: data.createdAt || (data.timestamp ? new Date(data.timestamp.seconds * 1000).toISOString() : new Date().toISOString())
+            });
+          });
+
+          // Merge unique records
+          const combinedMap = new Map();
+          [...allReqs, ...cloudReqs].forEach(item => {
+            const key = item.id || `${item.email}-${item.createdAt}`;
+            combinedMap.set(key, item);
+          });
+          allReqs = Array.from(combinedMap.values());
+        } catch (cloudErr) {
+          console.warn("Firestore fetch notice:", cloudErr.message);
+        }
+      }
+
+      const formattedReqs = allReqs.map(item => ({
         ...item,
         contactStatus: item.contactStatus || 'Pending',
         priority: item.priority || 'Medium'
@@ -38,8 +77,21 @@ export default function AdminRequests({ setActivePage }) {
 
       // Load Testimonials
       const storedReviews = JSON.parse(localStorage.getItem('qualityhub_testimonials') || '[]');
-      storedReviews.reverse();
-      setTestimonials(storedReviews);
+      let allReviews = [...storedReviews];
+
+      if (db) {
+        try {
+          const revSnapshot = await getDocs(collection(db, "qa_testimonials"));
+          revSnapshot.forEach((docSnap) => {
+            const rData = docSnap.data();
+            allReviews.push({ id: docSnap.id, ...rData });
+          });
+        } catch (e) {}
+      }
+
+      const revMap = new Map();
+      allReviews.forEach(r => revMap.set(r.id || r.name, r));
+      setTestimonials(Array.from(revMap.values()).reverse());
     } catch (e) {
       console.error(e);
     }
