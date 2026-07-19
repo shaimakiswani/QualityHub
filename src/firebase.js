@@ -60,4 +60,33 @@ export async function saveQARequest(requestData) {
   return { success: true, fallback: true };
 }
 
+export async function saveTestimonial(testimonialData) {
+  const payload = {
+    ...testimonialData,
+    id: Date.now().toString(),
+    createdAt: new Date().toISOString()
+  };
+
+  try {
+    const existing = JSON.parse(localStorage.getItem('qualityhub_testimonials') || '[]');
+    existing.push(payload);
+    localStorage.setItem('qualityhub_testimonials', JSON.stringify(existing));
+  } catch (err) {
+    console.error("LocalStorage save error:", err);
+  }
+
+  if (db) {
+    try {
+      await addDoc(collection(db, "qa_testimonials"), {
+        ...testimonialData,
+        timestamp: serverTimestamp()
+      });
+    } catch (dbErr) {
+      console.warn("Firestore save warning:", dbErr.message);
+    }
+  }
+
+  return { success: true };
+}
+
 export { db };

@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { saveTestimonial } from '../firebase';
 import { 
   ShieldCheck, 
   CheckCircle2, 
@@ -12,14 +13,76 @@ import {
   FileSpreadsheet, 
   Headphones,
   ArrowRight,
-  Star
+  Star,
+  PlusCircle,
+  MessageSquare,
+  X
 } from 'lucide-react';
 
 export default function Home({ setActivePage, onSelectService }) {
+  const [userTestimonials, setUserTestimonials] = useState([]);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [feedbackForm, setFeedbackForm] = useState({
+    name: '',
+    role: '',
+    rating: 5,
+    comment: ''
+  });
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+
+  const loadTestimonials = () => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('qualityhub_testimonials') || '[]');
+      setUserTestimonials(stored.reverse());
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
+    loadTestimonials();
+  }, []);
+
+  const handleFeedbackSubmit = async (e) => {
+    e.preventDefault();
+    await saveTestimonial(feedbackForm);
+    setFeedbackSubmitted(true);
+    setTimeout(() => {
+      setShowFeedbackModal(false);
+      setFeedbackSubmitted(false);
+      setFeedbackForm({ name: '', role: '', rating: 5, comment: '' });
+      loadTestimonials();
+    }, 1500);
+  };
+
   const handleServiceClick = (serviceTitle) => {
     onSelectService(serviceTitle);
     setActivePage('contact');
   };
+
+  const defaultTestimonials = [
+    {
+      comment: "QualityHub caught critical security vulnerabilities in our payment API prior to launch. Their automated suites saved us hundreds of dev hours!",
+      name: "Alex Smith",
+      role: "CTO at FinTech Matrix",
+      avatar: "AS",
+      rating: 5
+    },
+    {
+      comment: "The detailed bug reports with step-by-step videos and HAR logs made it trivial for our engineers to fix regression issues instantly.",
+      name: "Maya K.",
+      role: "VP of Product at CloudScale",
+      avatar: "MK",
+      rating: 5
+    },
+    {
+      comment: "Outstanding load and performance testing. They simulated 100k concurrent users and helped us optimize our DB queries before Black Friday.",
+      name: "David L.",
+      role: "Head of Engineering at ShopFlow",
+      avatar: "DL",
+      rating: 5
+    }
+  ];
 
   return (
     <div>
@@ -233,68 +296,165 @@ export default function Home({ setActivePage, onSelectService }) {
       {/* Testimonials */}
       <section style={{ padding: '80px 0' }}>
         <div className="container">
-          <div className="section-header">
+          <div className="section-header" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <h2 className="section-title">Trusted by <span className="cyan-glow-text">Industry Leaders</span></h2>
             <p className="section-desc">Here is what engineering managers and product leads say about our QA partnership.</p>
+            
+            <button 
+              className="btn btn-secondary btn-sm"
+              style={{ marginTop: '20px', borderColor: 'var(--primary-cyan)', color: 'var(--primary-cyan)' }}
+              onClick={() => setShowFeedbackModal(true)}
+            >
+              <PlusCircle size={16} />
+              <span>Leave Your Review / أضف تقييمك</span>
+            </button>
           </div>
 
           <div className="testimonials-grid">
-            <div className="glass-panel testimonial-card">
-              <div>
-                <div style={{ display: 'flex', gap: '4px', color: '#fbbf24', marginBottom: '14px' }}>
-                  {[...Array(5)].map((_, i) => <Star key={i} size={16} fill="#fbbf24" />)}
-                </div>
-                <p className="testimonial-text">
-                  "QualityHub caught critical security vulnerabilities in our payment API prior to launch. Their automated suites saved us hundreds of dev hours!"
-                </p>
-              </div>
-              <div className="client-info">
-                <div className="client-avatar">AS</div>
+            {/* Render User-Submitted Testimonials first */}
+            {userTestimonials.map((item, idx) => (
+              <div key={`user-${idx}`} className="glass-panel testimonial-card" style={{ borderColor: 'rgba(0, 240, 255, 0.4)' }}>
                 <div>
-                  <div className="client-name">Alex Smith</div>
-                  <div className="client-role">CTO at FinTech Matrix</div>
+                  <div style={{ display: 'flex', gap: '4px', color: '#fbbf24', marginBottom: '14px' }}>
+                    {[...Array(item.rating || 5)].map((_, i) => <Star key={i} size={16} fill="#fbbf24" />)}
+                  </div>
+                  <p className="testimonial-text">
+                    "{item.comment}"
+                  </p>
+                </div>
+                <div className="client-info">
+                  <div className="client-avatar" style={{ background: 'var(--gradient-glow)' }}>
+                    {item.name ? item.name.substring(0, 2).toUpperCase() : 'QA'}
+                  </div>
+                  <div>
+                    <div className="client-name">{item.name}</div>
+                    <div className="client-role">{item.role || 'Verified Client'}</div>
+                  </div>
                 </div>
               </div>
-            </div>
+            ))}
 
-            <div className="glass-panel testimonial-card">
-              <div>
-                <div style={{ display: 'flex', gap: '4px', color: '#fbbf24', marginBottom: '14px' }}>
-                  {[...Array(5)].map((_, i) => <Star key={i} size={16} fill="#fbbf24" />)}
-                </div>
-                <p className="testimonial-text">
-                  "The detailed bug reports with step-by-step videos and HAR logs made it trivial for our engineers to fix regression issues instantly."
-                </p>
-              </div>
-              <div className="client-info">
-                <div className="client-avatar">MK</div>
+            {/* Default Testimonials */}
+            {defaultTestimonials.map((item, idx) => (
+              <div key={`def-${idx}`} className="glass-panel testimonial-card">
                 <div>
-                  <div className="client-name">Maya K.</div>
-                  <div className="client-role">VP of Product at CloudScale</div>
+                  <div style={{ display: 'flex', gap: '4px', color: '#fbbf24', marginBottom: '14px' }}>
+                    {[...Array(item.rating)].map((_, i) => <Star key={i} size={16} fill="#fbbf24" />)}
+                  </div>
+                  <p className="testimonial-text">
+                    "{item.comment}"
+                  </p>
+                </div>
+                <div className="client-info">
+                  <div className="client-avatar">{item.avatar}</div>
+                  <div>
+                    <div className="client-name">{item.name}</div>
+                    <div className="client-role">{item.role}</div>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div className="glass-panel testimonial-card">
-              <div>
-                <div style={{ display: 'flex', gap: '4px', color: '#fbbf24', marginBottom: '14px' }}>
-                  {[...Array(5)].map((_, i) => <Star key={i} size={16} fill="#fbbf24" />)}
-                </div>
-                <p className="testimonial-text">
-                  "Outstanding load and performance testing. They simulated 100k concurrent users and helped us optimize our DB queries before Black Friday."
-                </p>
-              </div>
-              <div className="client-info">
-                <div className="client-avatar">DL</div>
-                <div>
-                  <div className="client-name">David L.</div>
-                  <div className="client-role">Head of Engineering at ShopFlow</div>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
+
+      {/* Leave Feedback Modal */}
+      {showFeedbackModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          background: 'rgba(5, 8, 14, 0.85)',
+          backdropFilter: 'blur(10px)',
+          zIndex: 1000,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '20px'
+        }}>
+          <div className="glass-panel" style={{ width: '100%', maxWidth: '500px', padding: '36px', position: 'relative' }}>
+            <button 
+              onClick={() => setShowFeedbackModal(false)}
+              style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
+            >
+              <X size={20} />
+            </button>
+
+            <h3 style={{ fontSize: '1.4rem', fontWeight: '700', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <MessageSquare size={20} color="var(--primary-cyan)" /> Leave Your Review
+            </h3>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', marginBottom: '24px' }}>
+              Share your feedback about our QA testing services.
+            </p>
+
+            {feedbackSubmitted ? (
+              <div style={{ padding: '20px', background: 'rgba(52, 211, 153, 0.1)', border: '1px solid rgba(52, 211, 153, 0.3)', color: '#34d399', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
+                <CheckCircle2 size={32} style={{ margin: '0 auto 10px' }} />
+                <h4 style={{ fontWeight: '700' }}>Thank you for your feedback!</h4>
+                <p style={{ fontSize: '0.85rem' }}>Your review has been submitted successfully.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleFeedbackSubmit}>
+                <div className="form-group" style={{ marginBottom: '16px' }}>
+                  <label className="form-label">Your Name *</label>
+                  <input 
+                    type="text" 
+                    required 
+                    value={feedbackForm.name} 
+                    onChange={(e) => setFeedbackForm({ ...feedbackForm, name: e.target.value })}
+                    className="form-input"
+                    placeholder="e.g. Sarah J."
+                  />
+                </div>
+
+                <div className="form-group" style={{ marginBottom: '16px' }}>
+                  <label className="form-label">Role / Company Name</label>
+                  <input 
+                    type="text" 
+                    value={feedbackForm.role} 
+                    onChange={(e) => setFeedbackForm({ ...feedbackForm, role: e.target.value })}
+                    className="form-input"
+                    placeholder="e.g. Product Lead at Startup"
+                  />
+                </div>
+
+                <div className="form-group" style={{ marginBottom: '16px' }}>
+                  <label className="form-label">Rating</label>
+                  <select 
+                    value={feedbackForm.rating}
+                    onChange={(e) => setFeedbackForm({ ...feedbackForm, rating: Number(e.target.value) })}
+                    className="form-select"
+                  >
+                    <option value={5}>⭐⭐⭐⭐⭐ 5 Stars (Excellent)</option>
+                    <option value={4}>⭐⭐⭐⭐ 4 Stars (Very Good)</option>
+                    <option value={3}>⭐⭐⭐ 3 Stars (Average)</option>
+                    <option value={2}>⭐⭐ 2 Stars (Needs Improvement)</option>
+                    <option value={1}>⭐ 1 Star (Poor)</option>
+                  </select>
+                </div>
+
+                <div className="form-group" style={{ marginBottom: '24px' }}>
+                  <label className="form-label">Your Feedback / Review *</label>
+                  <textarea 
+                    rows={4}
+                    required
+                    value={feedbackForm.comment}
+                    onChange={(e) => setFeedbackForm({ ...feedbackForm, comment: e.target.value })}
+                    className="form-textarea"
+                    placeholder="Describe your experience working with QualityHub..."
+                  ></textarea>
+                </div>
+
+                <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
+                  Submit Review / إرسال التقييم
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Contact CTA Banner */}
       <section style={{ padding: '60px 0 100px' }}>
