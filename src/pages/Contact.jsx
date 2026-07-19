@@ -6,6 +6,7 @@ export default function Contact({ selectedService }) {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
+    phone: '',
     company: '',
     serviceType: selectedService || 'Manual Testing',
     projectUrl: '',
@@ -40,6 +41,7 @@ export default function Contact({ selectedService }) {
       setFormData({
         fullName: '',
         email: '',
+        phone: '',
         company: '',
         serviceType: 'Manual Testing',
         projectUrl: '',
@@ -180,6 +182,19 @@ export default function Contact({ selectedService }) {
                     onChange={handleChange}
                     className="form-input"
                     placeholder="e.g. john@company.com"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Phone Number * (Required)</label>
+                  <input 
+                    type="tel" 
+                    name="phone"
+                    required
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className="form-input"
+                    placeholder="e.g. +962 7 7000 0000 / 077XXXXXXX"
                   />
                 </div>
 

@@ -1,14 +1,22 @@
-import React from 'react';
-import { ShieldCheck, Sparkles, Send, Database } from 'lucide-react';
+import { ShieldCheck, Sparkles, Send, Database, LogOut } from 'lucide-react';
 
 export default function Navbar({ activePage, setActivePage, onSelectService }) {
+  const handleExitAdmin = () => {
+    window.location.hash = '';
+    setActivePage('home');
+  };
+
   return (
     <nav className="navbar">
       <div className="container nav-wrapper">
         <a 
           href="#home" 
           className="brand-logo"
-          onClick={(e) => { e.preventDefault(); setActivePage('home'); }}
+          onClick={(e) => { 
+            e.preventDefault(); 
+            if (activePage === 'admin') window.location.hash = '';
+            setActivePage('home'); 
+          }}
         >
           <div className="logo-icon">
             <ShieldCheck size={24} />
@@ -20,7 +28,10 @@ export default function Navbar({ activePage, setActivePage, onSelectService }) {
           <li>
             <a 
               className={`nav-link ${activePage === 'home' ? 'active' : ''}`}
-              onClick={() => setActivePage('home')}
+              onClick={() => {
+                if (activePage === 'admin') window.location.hash = '';
+                setActivePage('home');
+              }}
             >
               Home
             </a>
@@ -28,7 +39,10 @@ export default function Navbar({ activePage, setActivePage, onSelectService }) {
           <li>
             <a 
               className={`nav-link ${activePage === 'services' ? 'active' : ''}`}
-              onClick={() => setActivePage('services')}
+              onClick={() => {
+                if (activePage === 'admin') window.location.hash = '';
+                setActivePage('services');
+              }}
             >
               Services
             </a>
@@ -36,7 +50,10 @@ export default function Navbar({ activePage, setActivePage, onSelectService }) {
           <li>
             <a 
               className={`nav-link ${activePage === 'contact' ? 'active' : ''}`}
-              onClick={() => setActivePage('contact')}
+              onClick={() => {
+                if (activePage === 'admin') window.location.hash = '';
+                setActivePage('contact');
+              }}
             >
               Contact / Request
             </a>
@@ -44,16 +61,27 @@ export default function Navbar({ activePage, setActivePage, onSelectService }) {
         </ul>
 
         <div className="nav-cta">
-          <button 
-            className="btn btn-primary btn-sm"
-            onClick={() => {
-              if (onSelectService) onSelectService('');
-              setActivePage('contact');
-            }}
-          >
-            <Send size={16} />
-            <span>Request Testing</span>
-          </button>
+          {activePage === 'admin' ? (
+            <button 
+              className="btn btn-secondary btn-sm"
+              style={{ borderColor: 'rgba(239, 68, 68, 0.5)', color: '#f87171', background: 'rgba(239, 68, 68, 0.1)' }}
+              onClick={handleExitAdmin}
+            >
+              <LogOut size={16} />
+              <span>Exit Admin / خروج</span>
+            </button>
+          ) : (
+            <button 
+              className="btn btn-primary btn-sm"
+              onClick={() => {
+                if (onSelectService) onSelectService('');
+                setActivePage('contact');
+              }}
+            >
+              <Send size={16} />
+              <span>Request Testing</span>
+            </button>
+          )}
         </div>
       </div>
     </nav>

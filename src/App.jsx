@@ -7,7 +7,9 @@ import Contact from './pages/Contact';
 import AdminRequests from './pages/AdminRequests';
 
 export default function App() {
-  const [activePage, setActivePage] = useState('home');
+  const [activePage, setActivePage] = useState(() => {
+    return window.location.hash === '#admin' ? 'admin' : 'home';
+  });
   const [selectedService, setSelectedService] = useState('');
 
   useEffect(() => {
@@ -18,12 +20,14 @@ export default function App() {
     const handleHashChange = () => {
       if (window.location.hash === '#admin') {
         setActivePage('admin');
+      } else if (window.location.hash === '' && activePage === 'admin') {
+        setActivePage('home');
       }
     };
     handleHashChange();
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
+  }, [activePage]);
 
   const renderPage = () => {
     switch (activePage) {
