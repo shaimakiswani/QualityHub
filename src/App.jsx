@@ -20,14 +20,12 @@ export default function App() {
     const handleHashChange = () => {
       if (window.location.hash === '#admin') {
         setActivePage('admin');
-      } else if (window.location.hash === '' && activePage === 'admin') {
-        setActivePage('home');
       }
     };
     handleHashChange();
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
-  }, [activePage]);
+  }, []);
 
   const renderPage = () => {
     switch (activePage) {

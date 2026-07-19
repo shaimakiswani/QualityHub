@@ -61,27 +61,17 @@ export default function Navbar({ activePage, setActivePage, onSelectService }) {
         </ul>
 
         <div className="nav-cta">
-          {activePage === 'admin' ? (
-            <button 
-              className="btn btn-secondary btn-sm"
-              style={{ borderColor: 'rgba(239, 68, 68, 0.5)', color: '#f87171', background: 'rgba(239, 68, 68, 0.1)' }}
-              onClick={handleExitAdmin}
-            >
-              <LogOut size={16} />
-              <span>Exit Admin / خروج</span>
-            </button>
-          ) : (
-            <button 
-              className="btn btn-primary btn-sm"
-              onClick={() => {
-                if (onSelectService) onSelectService('');
-                setActivePage('contact');
-              }}
-            >
-              <Send size={16} />
-              <span>Request Testing</span>
-            </button>
-          )}
+          <button 
+            className="btn btn-primary btn-sm"
+            onClick={() => {
+              if (activePage === 'admin') window.location.hash = '';
+              if (onSelectService) onSelectService('');
+              setActivePage('contact');
+            }}
+          >
+            <Send size={16} />
+            <span>Request Testing</span>
+          </button>
         </div>
       </div>
     </nav>

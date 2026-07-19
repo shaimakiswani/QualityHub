@@ -108,7 +108,7 @@ export default function Services({ setActivePage, onSelectService }) {
                   ))}
                 </div>
 
-                <ul className="feature-list" style={{ marginBottom: '0' }}>
+                <ul className="feature-list">
                   {svc.features.map((feat, idx) => (
                     <li key={idx} className="feature-item">
                       <CheckCircle2 size={16} className="check-icon" />
@@ -116,6 +116,15 @@ export default function Services({ setActivePage, onSelectService }) {
                     </li>
                   ))}
                 </ul>
+
+                <button 
+                  className="btn btn-primary"
+                  style={{ width: '100%', marginTop: 'auto' }}
+                  onClick={() => handleRequest(svc.title)}
+                >
+                  <span>Request {svc.title}</span>
+                  <ArrowRight size={16} />
+                </button>
               </div>
             </div>
           ))}
