@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, Sparkles, Send } from 'lucide-react';
+import { ShieldCheck, Sparkles, Send, Database } from 'lucide-react';
 
 export default function Navbar({ activePage, setActivePage, onSelectService }) {
   return (
@@ -39,6 +39,16 @@ export default function Navbar({ activePage, setActivePage, onSelectService }) {
               onClick={() => setActivePage('contact')}
             >
               Contact / Request
+            </a>
+          </li>
+          <li>
+            <a 
+              className={`nav-link ${activePage === 'admin' ? 'active' : ''}`}
+              onClick={() => setActivePage('admin')}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: activePage === 'admin' ? 'var(--primary-cyan)' : 'var(--text-muted)' }}
+            >
+              <Database size={15} />
+              <span>Admin DB</span>
             </a>
           </li>
         </ul>

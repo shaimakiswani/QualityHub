@@ -4,6 +4,7 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import Services from './pages/Services';
 import Contact from './pages/Contact';
+import AdminRequests from './pages/AdminRequests';
 
 export default function App() {
   const [activePage, setActivePage] = useState('home');
@@ -26,6 +27,12 @@ export default function App() {
         return (
           <Contact 
             selectedService={selectedService} 
+          />
+        );
+      case 'admin':
+        return (
+          <AdminRequests 
+            setActivePage={setActivePage} 
           />
         );
       case 'home':

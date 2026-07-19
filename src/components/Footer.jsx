@@ -45,6 +45,14 @@ export default function Footer({ setActivePage }) {
                   Request Service
                 </a>
               </li>
+              <li>
+                <a 
+                  style={{ color: 'var(--primary-cyan)', textDecoration: 'none', cursor: 'pointer', fontSize: '0.9rem', fontWeight: '600' }}
+                  onClick={() => setActivePage('admin')}
+                >
+                  ⚡ Admin DB (View Requests)
+                </a>
+              </li>
             </ul>
           </div>
 
