@@ -6,7 +6,7 @@ export default function Services({ setActivePage, onSelectService }) {
     {
       id: 'manual-testing',
       title: 'Manual Testing',
-      image: '/assets/manual_qa.png',
+      image: './assets/manual_qa.png',
       description: 'Comprehensive human exploratory, end-to-end user journey, functional, and usability testing across all browsers and mobile devices.',
       technologies: ['Functional Testing', 'Regression Testing', 'Smoke Testing', 'UAT', 'Cross-Browser', 'Mobile QA'],
       features: [
@@ -19,7 +19,7 @@ export default function Services({ setActivePage, onSelectService }) {
     {
       id: 'api-testing',
       title: 'API Testing',
-      image: '/assets/api_qa.png',
+      image: './assets/api_qa.png',
       description: 'Robust validation of REST, GraphQL, and SOAP microservices for schema accuracy, status code assertions, and security headers.',
       technologies: ['Postman', 'REST APIs', 'Status Codes', 'Response Validation', 'Swagger', 'GraphQL'],
       features: [
@@ -32,7 +32,7 @@ export default function Services({ setActivePage, onSelectService }) {
     {
       id: 'automation-testing',
       title: 'Automation Testing',
-      image: '/assets/automation_qa.png',
+      image: './assets/automation_qa.png',
       description: 'Build fast, maintainable, and resilient automated test suites integrated directly into your CI/CD deployment pipelines.',
       technologies: ['Selenium', 'Playwright', 'Cypress', 'TypeScript / JS', 'PyTest', 'GitHub Actions'],
       features: [
@@ -45,7 +45,7 @@ export default function Services({ setActivePage, onSelectService }) {
     {
       id: 'performance-testing',
       title: 'Performance Testing',
-      image: '/assets/performance_qa.png',
+      image: './assets/performance_qa.png',
       description: 'Stress test your infrastructure under simulated heavy loads to identify memory leaks, DB bottlenecks, and latency spikes.',
       technologies: ['JMeter', 'Load Testing', 'K6', 'Locust', 'Stress Testing', 'Latency Metrics'],
       features: [
@@ -58,7 +58,7 @@ export default function Services({ setActivePage, onSelectService }) {
     {
       id: 'security-testing',
       title: 'Security Testing',
-      image: '/assets/security_qa.png',
+      image: './assets/security_qa.png',
       description: 'Proactive vulnerability assessments to safeguard customer data, prevent unauthorized access, and ensure compliance.',
       technologies: ['OWASP Top 10', 'Penetration Audits', 'OWASP ZAP', 'Vulnerability Scans', 'XSS & SQLi'],
       features: [
